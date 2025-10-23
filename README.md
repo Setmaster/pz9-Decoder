@@ -47,7 +47,7 @@ python pz9_decoder_v2.py --out
 
 ### 3. Custom output directory
 ```bash
-python pz9_decoder_v2.py --out results
+python pz9_decoder.py --out results
 ```
 
 ---
