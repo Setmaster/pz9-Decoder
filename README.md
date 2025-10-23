@@ -21,6 +21,10 @@ It extracts core information such as species, nickname, original trainer, and tr
 
 ## 🖥️ Usage
 
+### Web version: **[pz9-Decoder Web](https://setmaster.github.io/pz9-Decoder/)**
+
+### Python
+
 ### 1. Basic (print summaries)
 ```bash
 python pz9_decoder_v2.py
