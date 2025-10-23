@@ -27,7 +27,7 @@ It extracts core information such as species, nickname, original trainer, and tr
 
 ### 1. Basic (print summaries)
 ```bash
-python pz9_decoder_v2.py
+python pz9_decoder.py
 ```
 
 Example output:
