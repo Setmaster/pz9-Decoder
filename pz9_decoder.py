@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 r"""
-pz9_decoder_v2.py
+pz9_decoder.py
 A simple "dumb-proof" decoder for 344-byte Legends Z-A `.pz9` Pokémon records.
 
 Default behavior (no args):
@@ -149,3 +149,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
