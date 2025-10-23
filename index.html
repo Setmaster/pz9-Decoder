@@ -12,7 +12,27 @@
     body { margin: 0; font: 15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; color: var(--ink); background: radial-gradient(1200px 800px at 20% -10%, #12203a 0%, #0b0f18 35%), var(--bg); }
     .wrap { max-width: 980px; margin: 40px auto; padding: 0 16px; }
     header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom: 18px; }
-    h1 { font-size: 22px; margin:0; letter-spacing:.3px; }
+    h1 { font-size: 22px; margin:0; letter-spacing:.3px; display: flex; align-items: center; gap: 8px; }
+    .github-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #142345;
+      border: 1px solid #2a4272;
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .github-btn:hover {
+      background: #18315f;
+      border-color: #3a5fa6;
+    }
+    .github-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--ink);
+    }
     .hint { color: var(--muted); font-size: 13px; }
     .panel { background: var(--card); border: 1px solid #1b2742; border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
     .uploader { display:grid; grid-template-columns: 1fr auto; gap: 12px; align-items:center; }
@@ -34,7 +54,26 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>.pz9 Decoder — Web</h1>
+      <h1>
+        .pz9 Decoder — Web
+        <button class="github-btn" title="View on GitHub" onclick="window.open('https://github.com/Setmaster/pz9-Decoder', '_blank')">
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 
+            6.53 5.47 7.59.4.07.55-.17.55-.38 
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52
+            0-.53.63-.01 1.08.58 1.23.82.72 1.21 
+            1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 
+            0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 
+            0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 
+            0 1.36.09 2 .27 1.53-1.04 2.2-.82 
+            2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 
+            1.27.82 2.15 0 3.07-1.87 3.75-3.65 
+            3.95.29.25.54.73.54 1.48 0 1.07-.01 
+            1.93-.01 2.2 0 .21.15.46.55.38A8.013 
+            8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+          </svg>
+        </button>
+      </h1>
       <div class="hint">Drop your <code>.pz9</code> files below — runs fully in your browser.</div>
     </header>
 
@@ -61,7 +100,6 @@
   const results = document.getElementById('results');
   const statusEl = document.getElementById('status');
 
-  // --- Species map (id -> Name) ---
   let speciesMap = new Map();
   let speciesReady = false;
 
@@ -84,14 +122,12 @@
     } catch(err){
       console.warn('Failed to load species map:', err);
       statusEl.textContent = 'Species map failed to load — decoding will still work but species will show as “SpeciesID <id>”.';
-      speciesReady = true; // allow decoding to proceed
+      speciesReady = true;
     }
   }
 
-  // Kick off loading immediately, but don't block UI
   loadSpeciesMap();
 
-  // --- Utilities for binary decoding ---
   function readU16LE(view, off){ return view.getUint16(off, true); }
   function readU32LE(view, off){ return view.getUint32(off, true); }
 
@@ -107,7 +143,6 @@
         out.push({ offset: offset + m.index * 2, string: m[0] });
       }
     }
-    // sort + dedupe by (offset,string)
     out.sort((a,b)=> a.offset - b.offset || a.string.localeCompare(b.string));
     const seen = new Set();
     const uniq = [];
@@ -130,19 +165,17 @@
     const speciesId = readU16LE(view, 0x08);
     const trainerId32 = readU32LE(view, 0x0C);
 
-    const tid7 = trainerId32 % 1_000_000; // 6 digits
+    const tid7 = trainerId32 % 1_000_000;
     const tid7str = String(tid7).padStart(6, '0');
     const sid7 = Math.floor(trainerId32 / 1_000_000);
 
     const strings = findUtf16leStrings(arrayBuffer);
     const nickname = strings.length >= 1 ? strings[0].string : '';
-    const originalOT = strings.length >= 1 ? strings[strings.length - 1].string : '';
 
     return {
       species_id: speciesId,
       species_name: speciesNameFromId(speciesId),
       nickname,
-      original_ot: originalOT,
       TID7: tid7str,
       SID7: sid7,
     };
@@ -151,7 +184,6 @@
   function renderResult(fileName, result){
     const card = document.createElement('div');
     card.className = 'card';
-
     const head = document.createElement('div');
     head.className = 'filehead';
     head.innerHTML = `<span>${fileName}</span>`;
@@ -163,7 +195,6 @@
     const rows = [
       ['Species:', result.species_name],
       ['Nick:', result.nickname],
-      ['OT:', result.original_ot],
       ['TID:', result.TID7],
       ['SID:', String(result.SID7)],
     ];
@@ -193,9 +224,7 @@
   }
 
   async function handleFiles(fileList){
-    // Wait until species map load attempt has started; but don't block forever
     if(!speciesReady){ await Promise.race([new Promise(r=>setTimeout(r, 800)), (async()=>{ while(!speciesReady) await new Promise(r=>setTimeout(r, 50)); })()]); }
-
     results.innerHTML = '';
     const tasks = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith('.pz9'));
     if(tasks.length === 0){ statusEl.textContent = 'No .pz9 files selected.'; return; }
@@ -213,7 +242,6 @@
     statusEl.textContent = '';
   }
 
-  // --- UI wiring ---
   pick.addEventListener('click', ()=> file.click());
   drop.addEventListener('click', ()=> file.click());
   drop.addEventListener('dragover', (e)=>{ e.preventDefault(); drop.classList.add('drag'); });
