@@ -42,7 +42,7 @@ SID: 1341
 ### 2. Save JSON output
 Creates an outdir/ folder containing a .json for each .pz9.
 ```bash
-python pz9_decoder_v2.py --out
+python pz9_decoder.py --out
 ```
 
 ### 3. Custom output directory
