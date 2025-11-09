@@ -1,4 +1,4 @@
-# 🧩 pz9-decoder
+# 🧩 ZA-decoder
 
 A simple Python tool to decode `.pz9` and `.pa9` Pokémon data files from **Pokémon Legends: Z-A**.
 It extracts core information such as species, nickname, original trainer, and trainer IDs.
