@@ -1,13 +1,13 @@
-# 🧩 pz9_decoder
+# 🧩 pz9-decoder
 
-A simple Python tool to decode `.pz9` Pokémon data files from **Pokémon Legends: Z-A**.
+A simple Python tool to decode `.pz9` and `.pa9` Pokémon data files from **Pokémon Legends: Z-A**.
 It extracts core information such as species, nickname, original trainer, and trainer IDs.
 
 ---
 
 ## 🔍 Features
 
-- Reads and decodes 344-byte `.pz9` Pokémon records.
+- Reads and decodes 344-byte `.pz9` and `.pa9` Pokémon records.
 - Displays key trainer info:
   - **Species**
   - **Nickname**
@@ -21,9 +21,11 @@ It extracts core information such as species, nickname, original trainer, and tr
 
 ## 🖥️ Usage
 
-### Web version: **[pz9-Decoder Web](https://setmaster.github.io/pz9-Decoder/)**
+### Web version: **[ZA-Decoder Web](https://setmaster.github.io/ZA-Decoder/)**
 
 ### Python
+
+The script will automatically find and process all `.pz9` and `.pa9` files in the current directory.
 
 ### 1. Basic (print summaries)
 ```bash
@@ -37,10 +39,16 @@ Nick: Fish
 OT: Set
 TID: 021203
 SID: 1341
+------------------
+Species: Pikachu
+Nick: Sparky
+OT: Ash
+TID: 123456
+SID: 7890
 ```
 
 ### 2. Save JSON output
-Creates an outdir/ folder containing a .json for each .pz9.
+Creates an `outdir/` folder containing a `.json` file for each `.pz9` or `.pa9` found.
 ```bash
 python pz9_decoder.py --out
 ```
@@ -60,17 +68,16 @@ python pz9_decoder.py --out results
   pip install requests
   ```
 
-  ---
+---
 
-  
 ## 🧠 How It Works
 
-- The script identifies `.pz9` records as **344 bytes long**, representing one Pokémon entry.
+- The script identifies `.pz9` and `.pa9` records as **344 bytes long**, representing one Pokémon entry.
 - It extracts key data from fixed offsets:
-  - `0x08–0x09` → **Species ID**  
+  - `0x08–0x09` → **Species ID**
   - `0x0C–0x0F` → **TrainerID32**
 - Trainer IDs are derived from the 32-bit `TrainerID32` value as follows:
-  - **TID7** = `TrainerID32 % 1_000_000` → 6-digit in-game Trainer ID  
+  - **TID7** = `TrainerID32 % 1_000_000` → 6-digit in-game Trainer ID
   - **SID7** = `TrainerID32 // 1_000_000` → 4-digit Secret ID (Gen 7+ format)
 - UTF-16LE encoded strings in the file are used to extract:
   - The Pokémon’s **nickname**

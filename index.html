@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>.pz9 Decoder — Legends Z-A</title>
+  <title>.pz9/.pa9 Decoder — Legends Z-A</title>
   <style>
     :root {
       --bg: #0b0f18; --card:#101726; --ink:#e6eefb; --muted:#9fb3d9; --brand:#6aa2ff; --ok:#59d38c; --warn:#ffb86c; --error:#ff6b6b;
@@ -55,7 +55,7 @@
   <div class="wrap">
     <header>
       <h1>
-        .pz9 Decoder — Web
+        ZA Decoder — Web
         <button class="github-btn" title="View on GitHub" onclick="window.open('https://github.com/Setmaster/pz9-Decoder', '_blank')">
           <svg viewBox="0 0 16 16" aria-hidden="true">
             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 
@@ -74,13 +74,13 @@
           </svg>
         </button>
       </h1>
-      <div class="hint">Drop your <code>.pz9</code> files below — runs fully in your browser.</div>
+      <div class="hint">Drop your <code>.pz9</code> or <code>.pa9</code> files below — runs fully in your browser.</div>
     </header>
 
     <section class="panel">
       <div class="uploader">
-        <div id="drop" class="drop" tabindex="0">Drop .pz9 files here or click to choose</div>
-        <input id="file" type="file" accept=".pz9" multiple style="display:none" />
+        <div id="drop" class="drop" tabindex="0">Drop .pz9/.pa9 files here or click to choose</div>
+        <input id="file" type="file" accept=".pz9,.pa9" multiple style="display:none" />
         <button id="pick" class="btn">Choose Files</button>
       </div>
       <div id="status" class="hint" style="margin-top:10px"></div>
@@ -226,8 +226,11 @@
   async function handleFiles(fileList){
     if(!speciesReady){ await Promise.race([new Promise(r=>setTimeout(r, 800)), (async()=>{ while(!speciesReady) await new Promise(r=>setTimeout(r, 50)); })()]); }
     results.innerHTML = '';
-    const tasks = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith('.pz9'));
-    if(tasks.length === 0){ statusEl.textContent = 'No .pz9 files selected.'; return; }
+    const tasks = Array.from(fileList).filter(f => {
+      const lname = f.name.toLowerCase();
+      return lname.endsWith('.pz9') || lname.endsWith('.pa9');
+    });
+    if(tasks.length === 0){ statusEl.textContent = 'No .pz9 or .pa9 files selected.'; return; }
     statusEl.textContent = `Decoding ${tasks.length} file(s)…`;
 
     for(const f of tasks){

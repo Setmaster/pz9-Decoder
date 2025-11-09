@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 r"""
 pz9_decoder.py
-A simple "dumb-proof" decoder for 344-byte Legends Z-A `.pz9` Pokémon records.
+A simple "dumb-proof" decoder for 344-byte Legends Z-A `.pz9` and `.pa9` Pokémon records.
 
 Default behavior (no args):
-    - Scans the current directory for all .pz9 files
+    - Scans the current directory for all .pz9 and .pa9 files
     - Prints a compact summary for each file:
         Species: <SpeciesName>
         Nick:    <Nickname>
@@ -114,17 +114,18 @@ def print_summary(entry: Dict[str, Any]) -> None:
     print(f"SID:     {entry['SID7']}")
 
 def gather_inputs() -> List[Path]:
-    return [Path(m) for m in sorted(glob.glob("*.pz9"))]
+    files = glob.glob("*.pz9") + glob.glob("*.pa9")
+    return [Path(m) for m in sorted(files)]
 
 def main():
-    parser = argparse.ArgumentParser(description="Simple .pz9 decoder (shows SID7 only).")
+    parser = argparse.ArgumentParser(description="Simple .pz9/.pa9 decoder (shows SID7 only).")
     parser.add_argument("--out", nargs="?", const="outdir", default=None,
-                        help="Write detailed JSON per .pz9 to this directory.")
+                        help="Write detailed JSON per .pz9/.pa9 to this directory.")
     args = parser.parse_args()
 
     inputs = gather_inputs()
     if not inputs:
-        print("No .pz9 files found in this directory.", file=sys.stderr)
+        print("No .pz9 or .pa9 files found in this directory.", file=sys.stderr)
         sys.exit(1)
 
     outdir: Path | None = None
@@ -149,4 +150,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
